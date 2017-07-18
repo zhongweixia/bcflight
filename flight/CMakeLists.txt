@@ -1,31 +1,49 @@
 #CMake最低版本号要求
 cmake_minimum_required(VERSION 2.6)
 
+#添加并且调用ProcessorCount
 include(ProcessorCount)
 ProcessorCount(NCPU)
 
+#设置项目的版本号
 set( VERSION_MAJOR 0 )
 set( VERSION_MINOR 1 )
 execute_process( COMMAND git rev-parse --short HEAD OUTPUT_VARIABLE GIT_HASH OUTPUT_STRIP_TRAILING_WHITESPACE )
 
+#设置 board,socket,rawwifi的值
+# set(<variable> <value> [[CACHE <type> <docstring> [FORCE]] | PARENT_SCOPE])
+#将variable的值设为value，如果有CACHE选项，那么<variable>就会添加到cache中；
+#这时<type>和<docstring>是必需的。<type>被CMake GUI用来选择一个窗口，让用户设置值。
+#<type>可以是下述值中的一个：
+#FILEPATH = 文件选择对话框。
+#PATH     = 路径选择对话框。
+#STRING   = 任意的字符串。
+#BOOL     = 布尔值选择复选框。
+#INTERNAL = 不需要GUI输入端。(适用于永久保存的变量)。
 SET( board "rpi" CACHE BOOL "board" )
 SET( socket 1 CACHE BOOL "socket" )
 SET( rawwifi 1 CACHE BOOL "rawwifi" )
 
+#option命令创建一个BOOL变量（ON/OFF）
 option(board "board")
 option(camera "camera")
 option(debug "debug")
 option(socket "socket")
 option(rawwifi "rawwifi")
 
+#如果board没有off并且类型不是generic,我们工具链就选择Toolchain-${board}.cmake
 if ( NOT ${board} MATCHES OFF AND NOT ${board} MATCHES "generic" )
 	set( CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/../Toolchain-${board}.cmake )
 endif()
 
+#使能ASM
 enable_language( ASM )
+#项目信息
 project( flight )
 
+#定义一个宏DIRLIST
 macro( DIRLIST result curdir removes )
+#GLOB选项会为所有匹配查询表达式的文件生成一个文件list
 	file(GLOB children RELATIVE ${curdir} ${curdir}/*)
 	set(dirlist "")
 	foreach(child ${children})
@@ -70,6 +88,7 @@ if ( NOT ${camera} MATCHES OFF AND ${camera_found} LESS 0 )
 endif()
 
 include( boards/${board}/board.cmake )
+#add_definitions向C/C++编译器添加 -D定义
 add_definitions( -DBOARD="${board}" -DBOARD_${board} )
 add_definitions( -DVERSION_STRING="bcflight_${board}_${VERSION_MAJOR}.${VERSION_MINOR}_${GIT_HASH}" )
 if ( NOT ${camera} MATCHES OFF )
@@ -78,11 +97,13 @@ endif()
 add_definitions( -DBUILD_SOCKET=${socket} )
 add_definitions( -DBUILD_RAWWIFI=${rawwifi} )
 
+#设置编译选项
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wuninitialized -std=gnu11 -fgnu89-inline" )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wuninitialized -std=gnu++11 -Wno-pmf-conversions -Wno-unused-result" )
 set( CMAKE_LD_FLAGS "${CMAKE_LD_FLAGS} -Wall -std=gnu11" )
 set( CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -Wall -std=gnu11" )
 
+#判断是否使用debug
 if ( "${debug}" MATCHES "yes" OR "${debug}" MATCHES "1" )
 	message( "-- WARNING : Debug enabled" )
 	set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g3" )
@@ -96,6 +117,7 @@ else()
 	set( CMAKE_LINKER_FLAGS "${CMAKE_LINKER_FLAGS} -s -Os" )
 endif()
 
+#用来定义非标准头文件的搜索路径
 include_directories( ${CMAKE_BINARY_DIR} )
 include_directories( ${CMAKE_SOURCE_DIR} )
 include_directories( . )
@@ -111,6 +133,7 @@ include_directories( video )
 include_directories( audio )
 include_directories( ${CMAKE_SOURCE_DIR}/../external/LuaJIT-2.0.4/src )
 
+#是否添加rawwifi功能
 if ( "${rawwifi}" MATCHES 1 )
 	SET( RAWWIFI_ON ${rawwifi} CACHE INTERNAL "RAWWIFI_ON" )
 	include_directories( ${CMAKE_SOURCE_DIR}/../librawwifi )
@@ -121,6 +144,7 @@ endif()
 # 	set( LIBS ${LIBS} ${CMAKE_BINARY_DIR}/librawwifi/librawwifi.a -lpcap ${NLGENL_LIBRARY} ${NLROUTE_LIBRARY} ${NL_LIBRARY} )
 # endif()
 
+#GLOB_RECURSE 与GLOB类似，区别在于它会遍历匹配目录的所有文件以及子目录下面的文件。
 file( GLOB_RECURSE BOARD_SOURCES boards/${board}/*.cpp boards/${board}/*.c )
 file( GLOB_RECURSE CONSOLE_SOURCES console/*.cpp )
 file( GLOB_RECURSE FRAMES_SOURCES frames/*.cpp )
@@ -150,6 +174,7 @@ list( APPEND SOURCES ${PERIPHERALS_SOURCES} )
 list( APPEND SOURCES ${VIDEO_SOURCES} )
 list( APPEND SOURCES ${AUDIO_SOURCES} )
 
+#设置源文件的属性
 set_source_files_properties( ${CMAKE_BINARY_DIR}/flight_register.cpp PROPERTIES GENERATED TRUE )
 add_custom_target( flight_register COMMAND ${CMAKE_SOURCE_DIR}/../tools/startup_gen.py ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/flight_register.cpp )
 
