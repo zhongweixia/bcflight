@@ -97,7 +97,6 @@ Board::Board( Main* main )
 
 	gDebug() << readcmd( "iw list" ) << "\n";
 
-	/* 创建board_stats线程 */
 	if ( mStatsThread == nullptr ) {
 		mStatsThread = new HookThread<Board>( "board_stats", this, &Board::StatsThreadRun );
 		mStatsThread->Start();

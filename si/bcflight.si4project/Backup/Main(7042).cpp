@@ -115,7 +115,6 @@ Main::Main()
 	, mCameraType( "" )
 {
 	mInstance = this;
-	
 #ifdef BOARD_generic
 #pragma message "Adding noisy fake accelerometer and gyroscope"
 	Sensor::AddDevice( new FakeAccelerometer( 3, Vector3f( 2.0f, 2.0f, 2.0f ) ) );
@@ -123,9 +122,7 @@ Main::Main()
 #endif
 
 	mBoard = new Board( this );
-	/* 只有申明没有定义 */
 	flight_register();
-	/* 信息加载 */
 	Board::InformLoading();
 
 // 	Test();

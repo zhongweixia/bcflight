@@ -35,14 +35,7 @@ Thread::Thread( const std::string& name )
 	, mAffinity( -1 )
 	, mSetAffinity( -1 )
 {
-	/* 在mThreads后面添加一个新元素 */
 	mThreads.emplace_back( this );
-	/**
-	*创建线程：第一个参数用来保存线程ID，
-	*第二个参数设置线程属性，
-	*第三个参数定义线程运行代码的起始地址 
-	*第四个参数运行函数的参数地址
-	*/
 	pthread_create( &mThread, nullptr, (void*(*)(void*))&Thread::ThreadEntry, this );
 	pthread_setname_np( mThread, name.substr( 0, 15 ).c_str() );
 }

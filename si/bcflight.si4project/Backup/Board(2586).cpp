@@ -73,17 +73,13 @@ Board::Board( Main* main )
 	OMX_Init();
 // 	VCOSInit();
 
-	/* wiringPi初始化 */
 	wiringPiSetupGpio();
 
-	/* 执行两个shell脚本 */
 	system( "mount -o remount,rw /var" );
 	system( "mkdir -p /var/VIDEO" );
 
-	/* 设置程序正常结束前调用的函数 */
 	atexit( &Board::AtExit );
 
-	/* 从registers目录读取寄存器的值 */
 	std::ifstream file( "/var/flight/registers" );
 	std::string line;
 	if ( file.is_open() ) {
@@ -97,7 +93,6 @@ Board::Board( Main* main )
 
 	gDebug() << readcmd( "iw list" ) << "\n";
 
-	/* 创建board_stats线程 */
 	if ( mStatsThread == nullptr ) {
 		mStatsThread = new HookThread<Board>( "board_stats", this, &Board::StatsThreadRun );
 		mStatsThread->Start();

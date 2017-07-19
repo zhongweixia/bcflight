@@ -123,9 +123,7 @@ Main::Main()
 #endif
 
 	mBoard = new Board( this );
-	/* 只有申明没有定义 */
 	flight_register();
-	/* 信息加载 */
 	Board::InformLoading();
 
 // 	Test();
