@@ -1,3 +1,0 @@
----- flight_register Matches (2 in 2 files) ----
-Main::Main in Main.cpp (E:\workspace_git\bcflight\flight) : 	flight_register();
-Main in Main.h (E:\workspace_git\bcflight\flight) : 	int flight_register();

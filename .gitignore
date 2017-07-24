@@ -39,3 +39,6 @@ external/*.gz
 external/*.zip
 # Old artifacts
 controller_rpi
+
+# si
+si/*
