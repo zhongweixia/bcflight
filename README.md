@@ -38,7 +38,8 @@ This video was recorded on 03-feb-2017 during an FPV session
 
 ![Photo of drone and controller](http://img4.hostingpics.net/pics/982150drichdronezmrcontrollersmall.jpg)
 
-Racer :
+Racer : 
+ 
 * ZMR250 frame
 * Raspberry Pi 3
 * Raspberry Pi official camera v2.1 (8MP, Sony IMX219 sensor) + wide-angle lens
@@ -49,7 +50,8 @@ Racer :
 * 4x DYS XM20A ESCs (flashed with BLHeli, DampedLight enabled)
 * 4x Multistar Elite 2204-2300KV motors
 
-RC controller :
+RC controller : 
+ 
 * Taranis X9D empty case
 * Taranis X9D gimballs
 * Raspberry Pi 2

@@ -42,3 +42,8 @@ controller_rpi
 
 # si
 si/*
+controller_pc/si/*
+flight/si/*
+
+#build
+controller_pc/build/*
